@@ -2,10 +2,20 @@
 
 
 using Microsoft.Extensions.Configuration;
+using Serilog; 
 
 namespace cli; 
 
 public class Program {
+
+     
+    public class EnvInfo {
+        public string env {get;set;}
+
+        public string greeting {get;set;}
+
+        public string machine {get;set;}
+    }
 
     const string ENV_PREFIX = "CLI_TOOL_"; 
     public static void Main(string[] args){
@@ -13,9 +23,11 @@ public class Program {
 
         var config = builder.AddJsonFile("appsettings.json",false,true)
 
-                    .AddEnvironmentVariables(prefix: ENV_PREFIX)
+                    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable(ENV_PREFIX+"ENV")}.json",true,true)
 
-                    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("CLI_TOOL_ENV")}.json",true,true).Build(); 
+                    .AddEnvironmentVariables(prefix: ENV_PREFIX)
+                    
+                    .Build(); 
 
         var envInfo = new EnvInfo(); 
 
@@ -25,13 +37,19 @@ public class Program {
 
         // export CLI_TOOL_EnvInfo__machine="machine name"   ::  prefix plus key value sperated by double undersore  
         Console.WriteLine(envInfo.machine); 
+
+
+
+        // Serilog config 
+        // to orverride the log level use :: xport CLI_TOOL_Serilog__MinimumLevel=Information
+        Log.Logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(config)
+                    .CreateLogger();
+        
+        Log.Information("from logger info");
+        Log.Debug("from logger info");
+        Log.Error("from logger info");
+
+        
     }
-}
-
-public class EnvInfo {
-    public string env {get;set;}
-
-    public string greeting {get;set;}
-
-    public string machine {get;set;}
 }
