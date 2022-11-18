@@ -2,6 +2,7 @@
 
 
 using Microsoft.Extensions.Configuration;
+using Serilog.Context; 
 using Serilog; 
 
 namespace cli; 
@@ -44,12 +45,20 @@ public class Program {
         // to orverride the log level use :: xport CLI_TOOL_Serilog__MinimumLevel=Information
         Log.Logger = new LoggerConfiguration()
                     .ReadFrom.Configuration(config)
+                    .Enrich.FromLogContext()
+                    .Enrich.WithProcessId()
+                    .Enrich.WithThreadName()
                     .CreateLogger();
-        
-        Log.Information("from logger info");
-        Log.Debug("from logger info");
-        Log.Error("from logger info");
 
+        using (LogContext.PushProperty("Method", "Main Method"))
+            {
+                    
+                    Log.Information("from logger info");
+
+                    Log.Debug("from logger debug");
+
+                    Log.Error(new Exception("Test Exception"),"from logger error");
+            }
         
     }
 }
