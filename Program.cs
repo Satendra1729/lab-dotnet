@@ -42,6 +42,11 @@ public class Program
             Log.Error(new Exception("Test Exception it should be second line due to format exception"), "from logger error");
         }
 
+        
+        ILogger log = Log.ForContext<Program>();// Log.ForContext(typeof(Program)); 
+
+        log.Information("Test Information "); 
+
         #endregion
 
     }
