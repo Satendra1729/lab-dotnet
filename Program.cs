@@ -2,63 +2,81 @@
 
 
 using Microsoft.Extensions.Configuration;
-using Serilog.Context; 
-using Serilog; 
+using Serilog.Context;
+using Serilog;
 
-namespace cli; 
+namespace cli;
 
-public class Program {
+public class Program
+{
+    const string ENV_PREFIX = "CLI_TOOL_";
+    public static void Main(string[] args)
+    {
 
-     
-    public class EnvInfo {
-        public string env {get;set;}
+        #region  App Configuration Setup and Test  
 
-        public string greeting {get;set;}
+        var config = SetConfiguration();
 
-        public string machine {get;set;}
+        var envInfo = new EnvInfo();
+
+        config.Bind("EnvInfo", envInfo);
+
+        Console.WriteLine(envInfo.greeting);
+
+        #endregion
+
+
+        #region  Set Serilog and Test 
+
+        SetSerilog(config);
+
+        Console.WriteLine(envInfo.machine);
+
+        using (LogContext.PushProperty("Method", "Main Method"))
+        {
+
+            Log.Information("from logger info");
+
+            Log.Debug("from logger debug");
+
+            Log.Error(new Exception("Test Exception it should be second line due to format exception"), "from logger error");
+        }
+
+        #endregion
+
     }
 
-    const string ENV_PREFIX = "CLI_TOOL_"; 
-    public static void Main(string[] args){
-        var builder = new ConfigurationBuilder(); 
+    #region  Configration Helper Methods
+    public static IConfiguration SetConfiguration()
+    {
 
-        var config = builder.AddJsonFile("appsettings.json",false,true)
-
-                    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable(ENV_PREFIX+"ENV")}.json",true,true)
-
-                    .AddEnvironmentVariables(prefix: ENV_PREFIX)
-                    
-                    .Build(); 
-
-        var envInfo = new EnvInfo(); 
-
-        config.Bind("EnvInfo",envInfo); 
-        
-        Console.WriteLine(envInfo.greeting); 
+        var builder = new ConfigurationBuilder();
 
         // export CLI_TOOL_EnvInfo__machine="machine name"   ::  prefix plus key value sperated by double undersore  
-        Console.WriteLine(envInfo.machine); 
 
+        var config = builder.AddJsonFile("appsettings.json", false, true)
 
+                    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable(ENV_PREFIX + "ENV")}.json", true, true)
 
+                    .AddEnvironmentVariables(prefix: ENV_PREFIX)
+
+                    .Build();
+
+        return config;
+
+    }
+
+    public static void SetSerilog(IConfiguration config)
+    {
         // Serilog config 
-        // to orverride the log level use :: xport CLI_TOOL_Serilog__MinimumLevel=Information
+        // to orverride the log level use :: export CLI_TOOL_Serilog__MinimumLevel=Information
         Log.Logger = new LoggerConfiguration()
                     .ReadFrom.Configuration(config)
                     .Enrich.FromLogContext()
                     .Enrich.WithProcessId()
                     .Enrich.WithThreadName()
                     .CreateLogger();
-
-        using (LogContext.PushProperty("Method", "Main Method"))
-            {
-                    
-                    Log.Information("from logger info");
-
-                    Log.Debug("from logger debug");
-
-                    Log.Error(new Exception("Test Exception"),"from logger error");
-            }
-        
     }
+
+    #endregion
 }
