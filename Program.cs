@@ -1,8 +1,5 @@
 ﻿
-
-
 using Microsoft.Extensions.Configuration;
-using Serilog.Context;
 using Serilog;
 using Autofac;
 using AutofacSerilogIntegration;
