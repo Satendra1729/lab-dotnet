@@ -4,55 +4,34 @@
 using Microsoft.Extensions.Configuration;
 using Serilog.Context;
 using Serilog;
+using Autofac;
+using AutofacSerilogIntegration;
 
 namespace cli;
-
 public class Program
 {
     const string ENV_PREFIX = "CLI_TOOL_";
     public static void Main(string[] args)
     {
 
-        #region  App Configuration Setup and Test  
-
-        var config = SetConfiguration();
-
-        var envInfo = new EnvInfo();
-
-        config.Bind("EnvInfo", envInfo);
-
-        Console.WriteLine(envInfo.greeting);
-
-        #endregion
-
-
-        #region  Set Serilog and Test 
+        var config = GetConfiguration();
 
         SetSerilog(config);
 
-        Console.WriteLine(envInfo.machine);
+        IContainer container = GetIoC(config);
 
-        using (LogContext.PushProperty("Method", "Main Method"))
+        using (var scope = container.BeginLifetimeScope())
         {
 
-            Log.Information("from logger info");
+            scope.Resolve<Application>().Run();
 
-            Log.Debug("from logger debug");
-
-            Log.Error(new Exception("Test Exception it should be second line due to format exception"), "from logger error");
         }
 
-        
-        ILogger log = Log.ForContext<Program>();// Log.ForContext(typeof(Program)); 
-
-        log.Information("Test Information "); 
-
-        #endregion
 
     }
 
     #region  Configration Helper Methods
-    public static IConfiguration SetConfiguration()
+    public static IConfiguration GetConfiguration()
     {
 
         var builder = new ConfigurationBuilder();
@@ -77,11 +56,29 @@ public class Program
         // to orverride the log level use :: export CLI_TOOL_Serilog__MinimumLevel=Information
         Log.Logger = new LoggerConfiguration()
                     .ReadFrom.Configuration(config)
+                    .Enrich.WithMachineName()
                     .Enrich.FromLogContext()
                     .Enrich.WithProcessId()
                     .Enrich.WithThreadName()
                     .CreateLogger();
     }
 
+    public static IContainer GetIoC(IConfiguration config)
+    {
+        var containerBuilder = new ContainerBuilder();
+
+        containerBuilder.RegisterLogger();
+
+        containerBuilder.RegisterInstance(config.GetSection("envInfo").Get<EnvInfo>()).AsSelf();
+
+        containerBuilder.RegisterType<Application>().AsSelf();
+
+        // register cumtom types as application grows
+
+        var container = containerBuilder.Build();
+
+        return container;
+    }
     #endregion
+
 }
