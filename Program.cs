@@ -35,9 +35,9 @@ public class Program
 
         // export CLI_TOOL_EnvInfo__machine="machine name"   ::  prefix plus key value sperated by double undersore  
 
-        var config = builder.AddJsonFile("appsettings.json", false, true)
+        var config = builder.AddJsonFile("configs/appsettings.json", false, true)
 
-                    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable(ENV_PREFIX + "ENV")}.json", true, true)
+                    .AddJsonFile($"configs/appsettings.{Environment.GetEnvironmentVariable(ENV_PREFIX + "ENV")}.json", true, true)
 
                     .AddEnvironmentVariables(prefix: ENV_PREFIX)
 
