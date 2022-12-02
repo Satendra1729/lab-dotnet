@@ -6,8 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <PackAsTool>true</PackAsTool>
-    <ToolCommandName>cli</ToolCommandName>
+    <ToolCommandName>clicat</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
+    <Version>9999.9999.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +24,7 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="configs/appsettings.json">
