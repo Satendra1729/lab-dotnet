@@ -15,7 +15,7 @@ public class Program
 
         SetSerilog(config);
 
-        IContainer container = GetIoC(config);
+        IContainer container = GetIoC(config,args);
 
         using (var scope = container.BeginLifetimeScope())
         {
@@ -60,7 +60,7 @@ public class Program
                     .CreateLogger();
     }
 
-    public static IContainer GetIoC(IConfiguration config)
+    public static IContainer GetIoC(IConfiguration config,string[] args)
     {
         var containerBuilder = new ContainerBuilder();
 
@@ -68,7 +68,7 @@ public class Program
 
         containerBuilder.RegisterInstance(config.GetSection("envInfo").Get<EnvInfo>()).AsSelf();
 
-        containerBuilder.RegisterType<Application>().AsSelf();
+        containerBuilder.Register((ctx) => new Application(ctx.Resolve<ILogger>(),ctx.Resolve<EnvInfo>(),args)).AsSelf();
 
         // register cumtom types as application grows
 
