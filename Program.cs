@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Autofac;
 using AutofacSerilogIntegration;
+using cli.Comds;
 
 namespace cli;
 public class Program
@@ -15,7 +16,7 @@ public class Program
 
         SetSerilog(config);
 
-        IContainer container = GetIoC(config,args);
+        IContainer container = GetIoC(config, args);
 
         using (var scope = container.BeginLifetimeScope())
         {
@@ -60,7 +61,7 @@ public class Program
                     .CreateLogger();
     }
 
-    public static IContainer GetIoC(IConfiguration config,string[] args)
+    public static IContainer GetIoC(IConfiguration config, string[] args)
     {
         var containerBuilder = new ContainerBuilder();
 
@@ -68,9 +69,10 @@ public class Program
 
         containerBuilder.RegisterInstance(config.GetSection("envInfo").Get<EnvInfo>()).AsSelf();
 
-        containerBuilder.Register((ctx) => new Application(ctx.Resolve<ILogger>(),ctx.Resolve<EnvInfo>(),args)).AsSelf();
+        containerBuilder.RegisterType<Root>().As<IRoot>();
 
-        // register cumtom types as application grows
+        containerBuilder.Register((ctx) =>
+                        new Application(ctx.Resolve<ILogger>(), ctx.Resolve<EnvInfo>(), args, ctx.Resolve<IRoot>())).AsSelf();
 
         var container = containerBuilder.Build();
 
