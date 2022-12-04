@@ -9,9 +9,15 @@ public class FileOptionBuilder : IOptionBuilder<FileInfo>
 {
 
     private Option<FileInfo> _fileOption;
+
+    private ErrorMessage _errorMessage;
+    public FileOptionBuilder(ErrorMessage errorMessage)
+    {
+        _errorMessage = errorMessage;  
+    }
     public IOptionBuilder<FileInfo> CreateOption()
     {
-        var fileOption = new Option<FileInfo>(name: "--file", description: "file to read");
+        var fileOption = new Option<FileInfo>(new string[]{"--file","-f"}, description: "file to read");
 
         fileOption.AddAlias("-f");
 
@@ -30,12 +36,11 @@ public class FileOptionBuilder : IOptionBuilder<FileInfo>
         return _fileOption; 
     }
 
-    
     private void  Validate(OptionResult optionResult)
     {
-        if (!File.Exists(optionResult.GetValueForOption(this._fileOption).FullName))
+        if (!optionResult.GetValueForOption(this._fileOption).Exists)
         {
-            optionResult.ErrorMessage = "File Does not exits";
+            optionResult.ErrorMessage = _errorMessage.FileNotFound; 
         }
         
     }

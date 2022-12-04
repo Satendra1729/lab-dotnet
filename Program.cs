@@ -71,8 +71,13 @@ public class Program
 
         containerBuilder.RegisterType<Root>().As<IRoot>();
 
+        containerBuilder.RegisterType<ErrorMessage>().SingleInstance(); 
+
         containerBuilder.Register((ctx) =>
-                        new Application(ctx.Resolve<ILogger>(), ctx.Resolve<EnvInfo>(), args, ctx.Resolve<IRoot>())).AsSelf();
+                        new Application(ctx.Resolve<ILogger>(), 
+                                        ctx.Resolve<EnvInfo>(), 
+                                        args,
+                                        ctx.Resolve<IRoot>())).AsSelf();
 
         var container = containerBuilder.Build();
 
