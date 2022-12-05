@@ -7,6 +7,7 @@ public class EchoSubCommandBuilder : ISubCommandBuilder
 {
     private Command _cmd { get; set; }
     private Option<string> _echoOption { get; set; }
+    public EchoOptionBuilder echoOptionBuilder {get;set;}
     public ISubCommandBuilder CreateCommand()
     {
         var comand = new Command("test", "this is a test sub command");
@@ -16,7 +17,7 @@ public class EchoSubCommandBuilder : ISubCommandBuilder
 
     public ISubCommandBuilder AddOptions()
     {
-        _echoOption = new EchoOptionBuilder().CreateOption().Build(); 
+        _echoOption = echoOptionBuilder.CreateOption().Build(); 
         _cmd.AddOption(_echoOption); 
         return this;
     }

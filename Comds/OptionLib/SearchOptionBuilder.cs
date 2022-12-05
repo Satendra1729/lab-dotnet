@@ -12,6 +12,8 @@ public class SearchOptionBuilder : IOptionBuilder<string>
     {
        var seachString = new Option<string>(new string[]{"--search","-s"},"search text");
 
+       seachString.SetDefaultValue(""); 
+
        this._searchOption = seachString; 
 
        return this;  

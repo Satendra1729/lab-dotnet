@@ -5,63 +5,69 @@ namespace cli.Comds;
 
 public class Root : IRoot
 {
-    private ErrorMessage _errorMessage {get;init; } 
+    public FileOptionBuilder fileOptionBuilder { get; set; }
 
-    public Root(ErrorMessage errorMessage){
-        _errorMessage = errorMessage; 
-    }
+    public EchoSubCommandBuilder echoSubCommandBuilder { get; set; }
+
+    public SearchOptionBuilder searchOptionBuilder { get; set; }
     public void AttachRootOptionsAndHandler(RootCommand rootCommand)
     {
         // root comands options
-        var fileOption = AddFileOption(rootCommand); 
+        var fileOption = AddFileOption(rootCommand);
 
-        var searchOption = AddSearchOption(rootCommand); 
+        var searchOption = AddSearchOption(rootCommand);
 
-        rootCommand.SetHandler(RootHandler, fileOption,searchOption);
+        rootCommand.SetHandler(RootHandler, fileOption, searchOption);
 
-       
     }
 
     public void AttachSubCommands(RootCommand rootCommand)
     {
-        var testComand = new EchoSubCommandBuilder()
+        var testComand = echoSubCommandBuilder
                                         .CreateCommand()
                                         .AddOptions()
                                         .AttachHandler()
-                                        .Build(); 
+                                        .Build();
 
-        rootCommand.AddCommand(testComand); 
+        rootCommand.AddCommand(testComand);
     }
 
     private Option<FileInfo> AddFileOption(RootCommand rootCommand)
     {
-        var fileOption = new FileOptionBuilder(_errorMessage)
+        var fileOption = fileOptionBuilder
                              .CreateOption()
                              .AttachValidator()
-                             .Build(); 
+                             .Build();
+
+        fileOption.IsRequired = true;
 
         rootCommand.AddOption(fileOption);
 
-        return fileOption; 
+        return fileOption;
 
     }
 
     private Option<string> AddSearchOption(RootCommand rootCommand)
     {
-        var searchOption = new SearchOptionBuilder()
+        var searchOption = searchOptionBuilder
                                .CreateOption()
-                               .Build(); 
+                               .Build();
 
-        rootCommand.AddOption(searchOption); 
+        rootCommand.AddOption(searchOption);
 
-        return searchOption; 
+        return searchOption;
     }
-    private void RootHandler(FileInfo fileInfo,string searchOption)
+    private void RootHandler(FileInfo fileInfo, string searchOption)
     {
-        File.ReadLines(fileInfo.FullName)
-            .Where(x => x.Contains(searchOption))
-            .ToList()
-            .ForEach(line => Console.WriteLine(line));
+
+        var fileLines = File.ReadLines(fileInfo.FullName);
+
+        if (!string.IsNullOrWhiteSpace(searchOption))
+            fileLines = fileLines
+            .Where(x => x.Contains(searchOption));
+
+        fileLines.ToList().ForEach(x => Console.WriteLine(x));
+
     }
-    
+
 }

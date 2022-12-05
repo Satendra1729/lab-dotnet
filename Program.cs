@@ -20,9 +20,7 @@ public class Program
 
         using (var scope = container.BeginLifetimeScope())
         {
-
             scope.Resolve<Application>().Run();
-
         }
 
 
@@ -65,20 +63,39 @@ public class Program
     {
         var containerBuilder = new ContainerBuilder();
 
+        // logging 
         containerBuilder.RegisterLogger();
-
+        // env info settings 
         containerBuilder.RegisterInstance(config.GetSection("envInfo").Get<EnvInfo>()).AsSelf();
+        // utillity 
+        containerBuilder.RegisterType<ErrorMessage>().SingleInstance();
+        // command option injection 
+        containerBuilder.RegisterType<FileOptionBuilder>().As<IOptionBuilder<FileInfo>>().AsSelf();
 
-        containerBuilder.RegisterType<Root>().As<IRoot>();
+        containerBuilder.RegisterType<EchoOptionBuilder>().As<IOptionBuilder<string>>().AsSelf(); 
 
-        containerBuilder.RegisterType<ErrorMessage>().SingleInstance(); 
+        containerBuilder.RegisterType<SearchOptionBuilder>().As<IOptionBuilder<string>>().AsSelf(); 
+        // subcommands 
+        containerBuilder.RegisterType<EchoSubCommandBuilder>().As<EchoSubCommandBuilder>().OnActivated((e) => {
+            e.Instance.echoOptionBuilder = e.Context.Resolve<EchoOptionBuilder>(); 
+        }); 
 
+        // root command
+        containerBuilder.RegisterType<Root>().As<IRoot>().OnActivated(e =>
+        {
+            e.Instance.fileOptionBuilder = e.Context.Resolve<FileOptionBuilder>();
+            e.Instance.echoSubCommandBuilder = e.Context.Resolve<EchoSubCommandBuilder>(); 
+            e.Instance.searchOptionBuilder = e.Context.Resolve<SearchOptionBuilder>(); 
+        });
+        // application entry Point  
         containerBuilder.Register((ctx) =>
-                        new Application(ctx.Resolve<ILogger>(), 
-                                        ctx.Resolve<EnvInfo>(), 
+                        new Application(ctx.Resolve<ILogger>(),
+                                        ctx.Resolve<EnvInfo>(),
                                         args,
                                         ctx.Resolve<IRoot>())).AsSelf();
 
+                                        
+        // build container 
         var container = containerBuilder.Build();
 
         return container;
