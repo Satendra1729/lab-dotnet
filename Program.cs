@@ -4,6 +4,8 @@ using Serilog;
 using Autofac;
 using AutofacSerilogIntegration;
 using cli.Comds;
+using Amazon;
+using Amazon.S3;
 
 namespace cli;
 public class Program
@@ -69,32 +71,42 @@ public class Program
         containerBuilder.RegisterInstance(config.GetSection("envInfo").Get<EnvInfo>()).AsSelf();
         // utillity 
         containerBuilder.RegisterType<ErrorMessage>().SingleInstance();
+
+        var options = config.GetAWSOptions();
+
+        IAmazonS3 client = options.CreateServiceClient<IAmazonS3>();
+
+        containerBuilder.Register(ctx => client).As<IAmazonS3>().SingleInstance(); 
+
         // command option injection 
         containerBuilder.RegisterType<FileOptionBuilder>().As<IOptionBuilder<FileInfo>>().AsSelf();
 
-        containerBuilder.RegisterType<EchoOptionBuilder>().As<IOptionBuilder<string>>().AsSelf(); 
+        containerBuilder.RegisterType<EchoOptionBuilder>().As<IOptionBuilder<string>>().AsSelf();
 
-        containerBuilder.RegisterType<SearchOptionBuilder>().As<IOptionBuilder<string>>().AsSelf(); 
+        containerBuilder.RegisterType<SearchOptionBuilder>().As<IOptionBuilder<string>>().AsSelf();
         // subcommands 
-        containerBuilder.RegisterType<EchoSubCommandBuilder>().As<EchoSubCommandBuilder>().OnActivated((e) => {
-            e.Instance.echoOptionBuilder = e.Context.Resolve<EchoOptionBuilder>(); 
-        }); 
+        containerBuilder.RegisterType<EchoSubCommandBuilder>().As<EchoSubCommandBuilder>().OnActivated((e) =>
+        {
+            e.Instance.echoOptionBuilder = e.Context.Resolve<EchoOptionBuilder>();
+        });
 
+        containerBuilder.RegisterType<AWSS3CommandBuilder>().As<AWSS3CommandBuilder>();
         // root command
         containerBuilder.RegisterType<Root>().As<IRoot>().OnActivated(e =>
         {
             e.Instance.fileOptionBuilder = e.Context.Resolve<FileOptionBuilder>();
-            e.Instance.echoSubCommandBuilder = e.Context.Resolve<EchoSubCommandBuilder>(); 
-            e.Instance.searchOptionBuilder = e.Context.Resolve<SearchOptionBuilder>(); 
+            e.Instance.echoSubCommandBuilder = e.Context.Resolve<EchoSubCommandBuilder>();
+            e.Instance.searchOptionBuilder = e.Context.Resolve<SearchOptionBuilder>();
+            e.Instance.aWSS3CommandBuilder = e.Context.Resolve<AWSS3CommandBuilder>();
         });
         // application entry Point  
         containerBuilder.Register((ctx) =>
                         new Application(ctx.Resolve<ILogger>(),
                                         ctx.Resolve<EnvInfo>(),
                                         args,
-                                        ctx.Resolve<IRoot>())).AsSelf();
+                                        ctx.Resolve<IRoot>())).SingleInstance();
 
-                                        
+
         // build container 
         var container = containerBuilder.Build();
 
