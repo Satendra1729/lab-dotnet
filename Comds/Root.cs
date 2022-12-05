@@ -12,11 +12,25 @@ public class Root : IRoot
     }
     public void AttachRootOptionsAndHandler(RootCommand rootCommand)
     {
+        // root comands options
         var fileOption = AddFileOption(rootCommand); 
 
         var searchOption = AddSearchOption(rootCommand); 
 
         rootCommand.SetHandler(RootHandler, fileOption,searchOption);
+
+       
+    }
+
+    public void AttachSubCommands(RootCommand rootCommand)
+    {
+        var testComand = new EchoSubCommandBuilder()
+                                        .CreateCommand()
+                                        .AddOptions()
+                                        .AttachHandler()
+                                        .Build(); 
+
+        rootCommand.AddCommand(testComand); 
     }
 
     private Option<FileInfo> AddFileOption(RootCommand rootCommand)

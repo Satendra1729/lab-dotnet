@@ -19,8 +19,6 @@ public class FileOptionBuilder : IOptionBuilder<FileInfo>
     {
         var fileOption = new Option<FileInfo>(new string[]{"--file","-f"}, description: "file to read");
 
-        fileOption.AddAlias("-f");
-
         _fileOption = fileOption; 
 
         return this; 

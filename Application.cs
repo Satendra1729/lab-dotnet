@@ -29,6 +29,8 @@ public class Application
 
         _root.AttachRootOptionsAndHandler(rootCommand); 
 
+        _root.AttachSubCommands(rootCommand); 
+
         rootCommand.Invoke(_args);         
 
         _logger.Information("Application stopping....");
