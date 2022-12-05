@@ -11,7 +11,7 @@ public class Root : IRoot
 
     public EchoSubCommandBuilder echoSubCommandBuilder { get; set; }
 
-    public AWSS3CommandBuilder aWSS3CommandBuilder {get;set;}
+    public AWSS3SubCommandBuilder aWSS3CommandBuilder {get;set;}
     public void AttachRootOptionsAndHandler(RootCommand rootCommand)
     {
         // root comands options
@@ -28,13 +28,13 @@ public class Root : IRoot
         var testCommand = echoSubCommandBuilder
                                         .CreateCommand()
                                         .AddOptions()
-                                        .AttachHandler()
+                                        .AttachHandlerWithExceptionHandler()
                                         .Build();
 
         var awss3Command = aWSS3CommandBuilder
                             .CreateCommand()
                             .AddOptions()
-                            .AttachHandler()
+                            .AttachHandlerWithExceptionHandler()
                             .Build(); 
 
         rootCommand.AddCommand(testCommand);
@@ -69,7 +69,7 @@ public class Root : IRoot
     }
     private void RootHandler(FileInfo fileInfo, string searchOption)
     {
-
+        try {
         var fileLines = File.ReadLines(fileInfo.FullName);
 
         if (!string.IsNullOrWhiteSpace(searchOption))
@@ -79,6 +79,9 @@ public class Root : IRoot
         fileLines
            .ToList()
            .ForEach(x => Console.WriteLine(x));
+        }catch(Exception ex){
+            Console.WriteLine(ex.Message); 
+        }
 
     }
 

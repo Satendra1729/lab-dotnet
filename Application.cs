@@ -1,7 +1,7 @@
 
 using Serilog;
 using System.CommandLine;
-using cli.Comds; 
+using cli.Comds;
 
 namespace cli;
 public class Application
@@ -17,7 +17,7 @@ public class Application
         _logger = logger;
         _envInfo = envInfo;
         _args = args;
-        _root = root; 
+        _root = root;
     }
     public void Run()
     {
@@ -27,11 +27,11 @@ public class Application
 
         var rootCommand = new RootCommand("dotnet cli app");
 
-        _root.AttachRootOptionsAndHandler(rootCommand); 
+        _root.AttachRootOptionsAndHandler(rootCommand);
 
-        _root.AttachSubCommands(rootCommand); 
+        _root.AttachSubCommands(rootCommand);
 
-        rootCommand.Invoke(_args);         
+        rootCommand.Invoke(_args);
 
         _logger.Information("Application stopping....");
     }

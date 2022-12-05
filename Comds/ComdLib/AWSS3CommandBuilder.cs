@@ -7,7 +7,7 @@ using Amazon.S3.Model;
 namespace cli.Comds;
 
 
-public class AWSS3CommandBuilder : ISubCommandBuilder
+public class AWSS3SubCommandBuilder : ISubCommandBuilder
 {
 
     private Command _cmd { get; set; }
@@ -16,32 +16,42 @@ public class AWSS3CommandBuilder : ISubCommandBuilder
 
     private IAmazonS3 _s3Client { get; set; }
 
-    public AWSS3CommandBuilder(IAmazonS3 s3Client)
+    public S3BucketNameOptionBuilder _s3BucketNameOptionBuilder { get; set; }
+
+    public AWSS3SubCommandBuilder(IAmazonS3 s3Client)
     {
         this._s3Client = s3Client;
     }
     public ISubCommandBuilder CreateCommand()
     {
-        _cmd = new Command("awss3", "work with aws");
+        _cmd = new Command("awss3", "aws s3");
         return this;
     }
     public ISubCommandBuilder AddOptions()
     {
-        _bucketName = new Option<string>(new string[] { "--bucket", "-b" }, "s3 bucket name");
+        _bucketName = _s3BucketNameOptionBuilder
+                            .CreateOption()
+                            .AttachValidator()
+                            .Build();
+
         _cmd.AddOption(_bucketName);
         return this;
     }
 
-    public ISubCommandBuilder AttachHandler()
+    public ISubCommandBuilder AttachHandlerWithExceptionHandler()
     {
         _cmd.SetHandler((bucketNameResult) =>
         {
-            Console.WriteLine("bucketNameResult => ",bucketNameResult); 
+           try {
             _s3Client.ListObjectsV2Async(new ListObjectsV2Request
             {
                 BucketName = bucketNameResult,
                 MaxKeys = 5,
             }).Result.S3Objects.ForEach(x => Console.WriteLine(x.Key));
+           }
+           catch(Exception ex){
+            Console.WriteLine(ex.Message); 
+           }
 
         }, _bucketName);
         return this;

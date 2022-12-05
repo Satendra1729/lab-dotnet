@@ -22,10 +22,14 @@ public class EchoSubCommandBuilder : ISubCommandBuilder
         return this;
     }
 
-    public ISubCommandBuilder AttachHandler()
+    public ISubCommandBuilder AttachHandlerWithExceptionHandler()
     {
         _cmd.SetHandler((_echoOptionResult) => { 
+            try {
             Console.WriteLine($"I am your echo : {_echoOptionResult}"); 
+            } catch(Exception ex){
+                Console.WriteLine(ex.Message); 
+            }
             }, this._echoOption);
         return this;
     }

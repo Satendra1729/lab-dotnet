@@ -76,7 +76,7 @@ public class Program
 
         IAmazonS3 client = options.CreateServiceClient<IAmazonS3>();
 
-        containerBuilder.Register(ctx => client).As<IAmazonS3>().SingleInstance(); 
+        containerBuilder.Register(ctx => client).As<IAmazonS3>().SingleInstance();
 
         // command option injection 
         containerBuilder.RegisterType<FileOptionBuilder>().As<IOptionBuilder<FileInfo>>().AsSelf();
@@ -84,20 +84,25 @@ public class Program
         containerBuilder.RegisterType<EchoOptionBuilder>().As<IOptionBuilder<string>>().AsSelf();
 
         containerBuilder.RegisterType<SearchOptionBuilder>().As<IOptionBuilder<string>>().AsSelf();
+
+        containerBuilder.RegisterType<S3BucketNameOptionBuilder>().As<IOptionBuilder<string>>().AsSelf();
         // subcommands 
         containerBuilder.RegisterType<EchoSubCommandBuilder>().As<EchoSubCommandBuilder>().OnActivated((e) =>
         {
             e.Instance.echoOptionBuilder = e.Context.Resolve<EchoOptionBuilder>();
         });
 
-        containerBuilder.RegisterType<AWSS3CommandBuilder>().As<AWSS3CommandBuilder>();
+        containerBuilder.RegisterType<AWSS3SubCommandBuilder>().As<AWSS3SubCommandBuilder>().OnActivated(e =>
+        {
+            e.Instance._s3BucketNameOptionBuilder = e.Context.Resolve<S3BucketNameOptionBuilder>();
+        });
         // root command
         containerBuilder.RegisterType<Root>().As<IRoot>().OnActivated(e =>
         {
             e.Instance.fileOptionBuilder = e.Context.Resolve<FileOptionBuilder>();
             e.Instance.echoSubCommandBuilder = e.Context.Resolve<EchoSubCommandBuilder>();
             e.Instance.searchOptionBuilder = e.Context.Resolve<SearchOptionBuilder>();
-            e.Instance.aWSS3CommandBuilder = e.Context.Resolve<AWSS3CommandBuilder>();
+            e.Instance.aWSS3CommandBuilder = e.Context.Resolve<AWSS3SubCommandBuilder>();
         });
         // application entry Point  
         containerBuilder.Register((ctx) =>

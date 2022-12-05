@@ -9,7 +9,7 @@ public interface ISubCommandBuilder {
 
     ISubCommandBuilder AddOptions(); 
 
-    ISubCommandBuilder AttachHandler();  
+    ISubCommandBuilder AttachHandlerWithExceptionHandler();  
 
     Command Build(); 
 }
