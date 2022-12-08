@@ -42,16 +42,20 @@ public class AWSS3SubCommandBuilder : ISubCommandBuilder
     {
         _cmd.SetHandler((bucketNameResult) =>
         {
-           try {
-            _s3Client.ListObjectsV2Async(new ListObjectsV2Request
+            try
             {
-                BucketName = bucketNameResult,
-                MaxKeys = 5,
-            }).Result.S3Objects.ForEach(x => Console.WriteLine(x.Key));
-           }
-           catch(Exception ex){
-            Console.WriteLine(ex.Message); 
-           }
+                _s3Client.ListObjectsV2Async(new ListObjectsV2Request
+                {
+                    BucketName = bucketNameResult,
+                    MaxKeys = 5,
+                }).Result.S3Objects.ForEach(x => Console.WriteLine(x.Key));
+                return Task.FromResult(0);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message); 
+                return Task.FromResult(1);
+            }
 
         }, _bucketName);
         return this;

@@ -11,7 +11,7 @@ public class Root : IRoot
 
     public EchoSubCommandBuilder echoSubCommandBuilder { get; set; }
 
-    public AWSS3SubCommandBuilder aWSS3CommandBuilder {get;set;}
+    public AWSS3SubCommandBuilder aWSS3CommandBuilder { get; set; }
     public void AttachRootOptionsAndHandler(RootCommand rootCommand)
     {
         // root comands options
@@ -35,11 +35,11 @@ public class Root : IRoot
                             .CreateCommand()
                             .AddOptions()
                             .AttachHandlerWithExceptionHandler()
-                            .Build(); 
+                            .Build();
 
         rootCommand.AddCommand(testCommand);
 
-        rootCommand.AddCommand(awss3Command); 
+        rootCommand.AddCommand(awss3Command);
     }
 
     private Option<FileInfo> AddFileOption(RootCommand rootCommand)
@@ -48,8 +48,6 @@ public class Root : IRoot
                              .CreateOption()
                              .AttachValidator()
                              .Build();
-
-        fileOption.IsRequired = true;
 
         rootCommand.AddOption(fileOption);
 
@@ -67,21 +65,26 @@ public class Root : IRoot
 
         return searchOption;
     }
-    private void RootHandler(FileInfo fileInfo, string searchOption)
+    private async Task<int> RootHandler(FileInfo fileInfo, string searchOption)
     {
-        try {
-        var fileLines = File.ReadLines(fileInfo.FullName);
+        try
+        {
+            var fileLines = File.ReadLines(fileInfo.FullName);
 
-        if (!string.IsNullOrWhiteSpace(searchOption))
-            fileLines = fileLines
-                        .Where(x => x.Contains(searchOption));
+            if (!string.IsNullOrWhiteSpace(searchOption))
+                fileLines = fileLines
+                            .Where(x => x.Contains(searchOption));
 
-        fileLines
-           .ToList()
-           .ForEach(x => Console.WriteLine(x));
-        }catch(Exception ex){
-            Console.WriteLine(ex.Message); 
+            fileLines
+               .ToList()
+               .ForEach(x => Console.WriteLine(x));
         }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+            return await Task.FromResult<int>(1);
+        }
+        return await Task.FromResult<int>(0);
 
     }
 

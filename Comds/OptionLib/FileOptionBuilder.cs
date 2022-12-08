@@ -17,9 +17,7 @@ public class FileOptionBuilder : IOptionBuilder<FileInfo>
     }
     public IOptionBuilder<FileInfo> CreateOption()
     {
-        var fileOption = new Option<FileInfo>(new string[]{"--file","-f"}, description: "file to read");
-
-        _fileOption = fileOption; 
+        _fileOption = new Option<FileInfo>(new string[]{"--file","-f"}, description: "file to read");
 
         return this; 
     }
@@ -36,9 +34,14 @@ public class FileOptionBuilder : IOptionBuilder<FileInfo>
 
     private void  Validate(OptionResult optionResult)
     {
-        if (!optionResult.GetValueForOption(this._fileOption).Exists)
+        var optionValue = optionResult.GetValueForOption(this._fileOption); 
+        if (optionValue is null)
         {
-            optionResult.ErrorMessage = _errorMessage.FileNotFound; 
+           optionResult.ErrorMessage = _errorMessage.InvalidFileOptionValue(this._fileOption.Name); 
+        }
+        else if(!optionValue.Exists)
+        {
+             optionResult.ErrorMessage = _errorMessage.FileNotFound; 
         }
         
     }

@@ -4,14 +4,13 @@ using Serilog;
 using Autofac;
 using AutofacSerilogIntegration;
 using cli.Comds;
-using Amazon;
 using Amazon.S3;
 
 namespace cli;
 public class Program
 {
     const string ENV_PREFIX = "CLI_TOOL_";
-    public static void Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
 
         var config = GetConfiguration();
@@ -22,7 +21,7 @@ public class Program
 
         using (var scope = container.BeginLifetimeScope())
         {
-            scope.Resolve<Application>().Run();
+            return await scope.Resolve<Application>().Run();
         }
 
 

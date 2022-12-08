@@ -19,7 +19,7 @@ public class Application
         _args = args;
         _root = root;
     }
-    public void Run()
+    public async Task<int> Run()
     {
         _logger.Information("Application started with env Configuration " + Environment.NewLine + _envInfo);
 
@@ -31,8 +31,7 @@ public class Application
 
         _root.AttachSubCommands(rootCommand);
 
-        rootCommand.Invoke(_args);
+        return await rootCommand.InvokeAsync(_args);
 
-        _logger.Information("Application stopping....");
     }
 }
