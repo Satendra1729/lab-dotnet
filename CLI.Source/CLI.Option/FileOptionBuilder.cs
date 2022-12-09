@@ -1,9 +1,9 @@
 
-
 using System.CommandLine;
 using System.CommandLine.Parsing;
+using CLI.Utils; 
 
-namespace cli.Comds; 
+namespace CLI.Option;
 
 public class FileOptionBuilder : IOptionBuilder<FileInfo>
 {

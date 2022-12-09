@@ -1,7 +1,6 @@
 using Autofac; 
 
-namespace cli;
-
+namespace CLI;
 public interface IDependencyBuilder {
 
     IDependencyBuilder AddConfiguration(); 

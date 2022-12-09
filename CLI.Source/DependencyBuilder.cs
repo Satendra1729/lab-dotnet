@@ -1,20 +1,23 @@
 
 
+using System; 
+using System.IO;
 using Autofac;
 using Serilog; 
 using AutofacSerilogIntegration;
 using Microsoft.Extensions.Configuration;
-
-using cli.Comds;
 using Amazon.S3;
 
-namespace cli;
+using CLI.Cmd;
+using CLI.Utils; 
+using CLI.Option; 
+using CLI.POCO; 
+
+namespace CLI;
 
 public class DependencyBuilder : IDependencyBuilder
 {
-
-    const string ENV_PREFIX = "CLI_TOOL_";
-
+    const string ENV_PREFIX = "CLI_";
     private ContainerBuilder _containerBuilder {get;init;}
     private IConfigurationRoot _config {get;set;}
     public DependencyBuilder()
@@ -25,11 +28,11 @@ public class DependencyBuilder : IDependencyBuilder
     {
         var builder = new ConfigurationBuilder();
 
-        // export CLI_TOOL_EnvInfo__machine="machine name"   ::  prefix plus key value sperated by double undersore  
+        // export CLI_EnvInfo__machine="machine name"   ::  prefix plus key value sperated by double undersore  
 
-        _config = builder.AddJsonFile("configs/appsettings.json", false, true)
+        _config = builder.AddJsonFile("CLI.Configs/appsettings.json", false, true)
 
-                    .AddJsonFile($"configs/appsettings.{Environment.GetEnvironmentVariable(ENV_PREFIX + "ENV")}.json", true, true)
+                    .AddJsonFile($"CLI.Configs/appsettings.{Environment.GetEnvironmentVariable(ENV_PREFIX + "ENV")}.json", true, true)
 
                     .AddEnvironmentVariables(prefix: ENV_PREFIX)
 
@@ -39,7 +42,7 @@ public class DependencyBuilder : IDependencyBuilder
     }
     public virtual IDependencyBuilder AddLogger()
     {
-        // to orverride the log level use :: export CLI_TOOL_Serilog__MinimumLevel=Information
+        // to orverride the log level use :: export CLI_Serilog__MinimumLevel=Information
         Log.Logger = new LoggerConfiguration()
                     .ReadFrom.Configuration(_config)
                     .Enrich.WithMachineName()
@@ -84,7 +87,7 @@ public class DependencyBuilder : IDependencyBuilder
         // application entry Point  
         _containerBuilder.Register((ctx) =>
                         new Application(ctx.Resolve<ILogger>(),
-                                        ctx.Resolve<EnvInfo>(),
+                                        ctx.Resolve<Settings>(),
                                         ctx.Resolve<IRoot>())).SingleInstance();
 
         return this; 
@@ -92,7 +95,7 @@ public class DependencyBuilder : IDependencyBuilder
     public virtual IDependencyBuilder AddExternalDependencies()
     {
             // Envinfo settings 
-            _containerBuilder.RegisterInstance(_config.GetSection("envInfo").Get<EnvInfo>()).AsSelf();
+            _containerBuilder.RegisterInstance(_config.GetSection("envInfo").Get<Settings>()).AsSelf();
 
             // AWS S3 Client 
             var options = _config.GetAWSOptions();

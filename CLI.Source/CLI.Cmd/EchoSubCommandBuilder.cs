@@ -1,7 +1,8 @@
-
 using System.CommandLine;
 
-namespace cli.Comds;
+using CLI.Option; 
+
+namespace CLI.Cmd;
 
 public class EchoSubCommandBuilder : ISubCommandBuilder
 {

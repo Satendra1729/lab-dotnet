@@ -1,6 +1,6 @@
 using System.CommandLine; 
 
-namespace cli.Comds; 
+namespace CLI.Cmd;
 
 public interface IRoot {
     void AttachRootOptionsAndHandler(RootCommand rootCommand); 

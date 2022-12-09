@@ -1,16 +1,18 @@
 
+
 using Serilog;
 using System.CommandLine;
-using cli.Comds;
+using CLI.Cmd;
+using CLI.POCO;
 
-namespace cli;
+namespace CLI;
 public class Application
 {
 
     private ILogger _logger { get; init; }
-    private EnvInfo _envInfo { get; init; }
+    private Settings _envInfo { get; init; }
     private IRoot _root {get;init;}
-    public Application(ILogger logger, EnvInfo envInfo, IRoot root)
+    public Application(ILogger logger, Settings envInfo, IRoot root)
     {
         _logger = logger;
         _envInfo = envInfo;

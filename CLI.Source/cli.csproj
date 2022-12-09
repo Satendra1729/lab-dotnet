@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <PackAsTool>true</PackAsTool>
-    <ToolCommandName>clicat</ToolCommandName>
+    <ToolCommandName>cli</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <Version>9999.9999.1</Version>
   </PropertyGroup>
@@ -29,16 +29,16 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="configs/appsettings.json">
+    <Content Include="CLI.Configs/appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="configs/appsettings.dev.json">
+    <Content Include="CLI.Configs/appsettings.dev.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="configs/appsettings.qa.json">
+    <Content Include="CLI.Configs/appsettings.qa.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="configs/appsettings.uat.json">
+    <Content Include="CLI.Configs/appsettings.uat.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

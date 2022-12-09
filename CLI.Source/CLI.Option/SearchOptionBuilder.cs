@@ -2,7 +2,7 @@
 
 using System.CommandLine;
 
-namespace cli.Comds;
+namespace CLI.Option;
 
 
 public class SearchOptionBuilder : IOptionBuilder<string>

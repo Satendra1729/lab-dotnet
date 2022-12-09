@@ -1,7 +1,7 @@
 using System.Text.Json;
-namespace cli;
+namespace CLI.POCO;
 
-public class EnvInfo
+public class Settings
 {
     public string env { get; set; }
 
@@ -11,6 +11,6 @@ public class EnvInfo
 
     public override string ToString()
     {
-        return JsonSerializer.Serialize<EnvInfo>(this, new JsonSerializerOptions { WriteIndented = true });
+        return JsonSerializer.Serialize<Settings>(this, new JsonSerializerOptions { WriteIndented = true });
     }
 }

@@ -1,9 +1,8 @@
 
 
 using System.CommandLine; 
-using System.CommandLine.Parsing; 
 
-namespace cli.Comds; 
+namespace CLI.Option;
 public interface IOptionBuilder<T> {
 
     IOptionBuilder<T> CreateOption(); 

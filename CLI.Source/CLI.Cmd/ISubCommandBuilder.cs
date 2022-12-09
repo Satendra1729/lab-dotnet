@@ -1,7 +1,7 @@
 
 using System.CommandLine; 
 
-namespace cli.Comds; 
+namespace CLI.Cmd;
 
 public interface ISubCommandBuilder {
 

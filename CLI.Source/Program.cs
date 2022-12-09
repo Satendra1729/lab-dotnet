@@ -1,12 +1,6 @@
-﻿
-using Microsoft.Extensions.Configuration;
-using Serilog;
+﻿using System.Threading.Tasks; 
 using Autofac;
-using AutofacSerilogIntegration;
-using cli.Comds;
-using Amazon.S3;
-
-namespace cli;
+namespace CLI;
 public class Program
 {
     public static async Task<int> Main(string[] args)

@@ -1,13 +1,13 @@
 
 using System.CommandLine;
 using System.CommandLine.Parsing;
+using CLI.Utils; 
 
-namespace cli.Comds;
+namespace CLI.Option;
 
 
 public class EchoOptionBuilder : IOptionBuilder<string>
 {
-
     public Option<string> _echoOption {get;set;}
 
     public ErrorMessage _errorMessage {get;init;}

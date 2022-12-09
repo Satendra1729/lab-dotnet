@@ -1,6 +1,7 @@
 using System.CommandLine;
+using CLI.Option; 
 
-namespace cli.Comds;
+namespace CLI.Cmd;
 
 
 public class Root : IRoot
