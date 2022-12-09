@@ -9,21 +9,18 @@ public class Application
 
     private ILogger _logger { get; init; }
     private EnvInfo _envInfo { get; init; }
-    private string[] _args { get; init; }
-
     private IRoot _root {get;init;}
-    public Application(ILogger logger, EnvInfo envInfo, string[] args,IRoot root)
+    public Application(ILogger logger, EnvInfo envInfo, IRoot root)
     {
         _logger = logger;
         _envInfo = envInfo;
-        _args = args;
         _root = root;
     }
-    public async Task<int> Run()
+    public async Task<int> Run(string[] args)
     {
         _logger.Information("Application started with env Configuration " + Environment.NewLine + _envInfo);
 
-        _logger.Information("Application started with env Configuration " + Environment.NewLine + String.Join(",", _args));
+        _logger.Information("Application started with env Configuration " + Environment.NewLine + String.Join(",", args));
 
         var rootCommand = new RootCommand("dotnet cli app");
 
@@ -31,7 +28,7 @@ public class Application
 
         _root.AttachSubCommands(rootCommand);
 
-        return await rootCommand.InvokeAsync(_args);
+        return await rootCommand.InvokeAsync(args);
 
     }
 }
