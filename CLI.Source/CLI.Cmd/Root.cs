@@ -1,11 +1,13 @@
 using System.CommandLine;
 using CLI.Option; 
+using CLI.Wrapper; 
 
 namespace CLI.Cmd;
 
 
 public class Root : IRoot
 {
+    private IFileWrapper _fileWrapper {get;set;}
     public FileOptionBuilder fileOptionBuilder { get; set; }
 
     public SearchOptionBuilder searchOptionBuilder { get; set; }
@@ -13,6 +15,12 @@ public class Root : IRoot
     public EchoSubCommandBuilder echoSubCommandBuilder { get; set; }
 
     public AWSS3SubCommandBuilder aWSS3CommandBuilder { get; set; }
+
+
+    public Root(IFileWrapper fileWrapper)
+    {
+        _fileWrapper = fileWrapper;  
+    }
     public void AttachRootOptionsAndHandler(RootCommand rootCommand)
     {
         // root comands options
@@ -70,7 +78,7 @@ public class Root : IRoot
     {
         try
         {
-            var fileLines = File.ReadLines(fileInfo.FullName);
+            var fileLines = _fileWrapper.ReadLines(fileInfo.FullName);
 
             if (!string.IsNullOrWhiteSpace(searchOption))
                 fileLines = fileLines

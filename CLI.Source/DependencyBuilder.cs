@@ -1,7 +1,4 @@
 
-
-using System; 
-using System.IO;
 using Autofac;
 using Serilog; 
 using AutofacSerilogIntegration;
@@ -12,14 +9,15 @@ using CLI.Cmd;
 using CLI.Utils; 
 using CLI.Option; 
 using CLI.POCO; 
+using CLI.Wrapper; 
 
 namespace CLI;
 
 public class DependencyBuilder : IDependencyBuilder
 {
     const string ENV_PREFIX = "CLI_";
-    private ContainerBuilder _containerBuilder {get;init;}
-    private IConfigurationRoot _config {get;set;}
+    protected ContainerBuilder _containerBuilder {get;init;}
+    protected IConfigurationRoot _config {get;set;}
     public DependencyBuilder()
     {
         _containerBuilder = new ContainerBuilder(); 
@@ -103,6 +101,9 @@ public class DependencyBuilder : IDependencyBuilder
             IAmazonS3 client = options.CreateServiceClient<IAmazonS3>();
 
             _containerBuilder.Register(ctx => client).As<IAmazonS3>().SingleInstance();
+
+            // File 
+            _containerBuilder.RegisterType<FileWrapper>().As<IFileWrapper>(); 
 
             return this;
     }

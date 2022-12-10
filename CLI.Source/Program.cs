@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks; 
-using Autofac;
+﻿using Autofac;
 namespace CLI;
 public class Program
 {

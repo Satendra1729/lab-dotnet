@@ -9,7 +9,6 @@ public class FileOptionBuilder : IOptionBuilder<FileInfo>
 {
 
     private Option<FileInfo> _fileOption;
-
     private ErrorMessage _errorMessage;
     public FileOptionBuilder(ErrorMessage errorMessage)
     {
