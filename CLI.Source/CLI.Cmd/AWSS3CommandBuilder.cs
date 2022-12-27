@@ -21,7 +21,7 @@ public class AWSS3SubCommandBuilder : ISubCommandBuilder
 
     public AWSS3SubCommandBuilder(IAmazonS3 s3Client)
     {
-        this._s3Client = s3Client;
+        this._s3Client = s3Client?? throw new ArgumentNullException(nameof(s3Client));
     }
     public ISubCommandBuilder CreateCommand()
     {

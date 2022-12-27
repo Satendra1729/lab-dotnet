@@ -14,7 +14,7 @@ public class S3BucketNameOptionBuilder : IOptionBuilder<string>
 
     public S3BucketNameOptionBuilder(ErrorMessage errorMessage)
     {
-        _errorMessage = errorMessage; 
+        _errorMessage = errorMessage?? throw new ArgumentNullException(nameof(errorMessage)); 
     }
 
     public IOptionBuilder<string> CreateOption()

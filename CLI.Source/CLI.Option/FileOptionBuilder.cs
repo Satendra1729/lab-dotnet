@@ -12,7 +12,7 @@ public class FileOptionBuilder : IOptionBuilder<FileInfo>
     private ErrorMessage _errorMessage;
     public FileOptionBuilder(ErrorMessage errorMessage)
     {
-        _errorMessage = errorMessage;  
+        _errorMessage = errorMessage?? throw new ArgumentNullException(nameof(errorMessage));  
     }
     public IOptionBuilder<FileInfo> CreateOption()
     {

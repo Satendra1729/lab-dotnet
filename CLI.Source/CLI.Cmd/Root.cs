@@ -19,7 +19,7 @@ public class Root : IRoot
 
     public Root(IFileWrapper fileWrapper)
     {
-        _fileWrapper = fileWrapper;  
+        _fileWrapper = fileWrapper ?? throw new ArgumentNullException(nameof(fileWrapper));  
     }
     public void AttachRootOptionsAndHandler(RootCommand rootCommand)
     {

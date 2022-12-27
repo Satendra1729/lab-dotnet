@@ -12,7 +12,7 @@ public class EchoOptionBuilder : IOptionBuilder<string>
 
     public ErrorMessage _errorMessage {get;init;}
     public EchoOptionBuilder(ErrorMessage errorMessage){
-      _errorMessage = errorMessage; 
+      _errorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage)); 
     }
 
       public IOptionBuilder<string> CreateOption()

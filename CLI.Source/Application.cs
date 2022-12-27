@@ -14,9 +14,9 @@ public class Application
     private IRoot _root {get;init;}
     public Application(ILogger logger, Settings envInfo, IRoot root)
     {
-        _logger = logger;
-        _envInfo = envInfo;
-        _root = root;
+        _logger = logger?? throw new ArgumentNullException(nameof(logger));
+        _envInfo = envInfo?? throw new ArgumentNullException(nameof(envInfo));
+        _root = root?? throw new ArgumentNullException(nameof(root));
     }
     public async Task<int> Run(string[] args)
     {
