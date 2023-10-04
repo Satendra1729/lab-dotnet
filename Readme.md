@@ -10,16 +10,24 @@
 
 ### add nuget package
 
-> dotnet add package coverlet.collector
+```bash
+dotnet add package coverlet.collector
+```
 
 ### add report generating tool
 
-> dotnet tool install -g dotnet-reportgenerator-globaltool
+```bash
+dotnet tool install -g dotnet-reportgenerator-globaltool
+```
 
 ### collect report data
 
-> dotnet test --collect:"XPlat code coverage"
+```bash
+dotnet test --collect:"XPlat code coverage"
+```
 
 ### generate final report
 
-> reportgenerator -reports:TestResults/*/coverage.cobertura.xml -targetdir:result.coverage
+```bash
+reportgenerator -reports:TestResults/*/coverage.cobertura.xml -targetdir:result.coverage
+```
