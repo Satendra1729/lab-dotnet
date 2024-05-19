@@ -1,36 +1,10 @@
-## System.ComandLine :: cli
+# lab-dotnet
 
-- [add reporting](#add-reporting)
-  - [add nuget package](#add-nuget-package)
-  - [add report generating tool](#add-report-generating-tool)
-  - [collect report data](#collect-report-data)
-  - [generate final report](#generate-final-report)
+1. [System.CommandLine](./cli/cli.md#systemcomandline--cli)
 
-### add reporting
+2. [BenchMarking](./Benchmarking/BenchMarking.md)
 
-#### add nuget package
-
-```bash
-dotnet add package coverlet.collector
-```
-
-#### add report generating tool
-
-```bash
-dotnet tool install -g dotnet-reportgenerator-globaltool
-```
-
-#### collect report data
-
-```bash
-dotnet test --collect:"XPlat code coverage"
-```
-
-#### generate final report
-
-```bash
-reportgenerator -reports:TestResults/*/coverage.cobertura.xml -targetdir:result.coverage
-```
+## Benchmark
 
 ## .Net Tool :: dotnettool [How to manage .NET tools](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools)
 
